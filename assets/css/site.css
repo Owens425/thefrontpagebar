@@ -1,0 +1,1373 @@
+/* ===========================================================================
+   The Front Page Bar, Ballymena
+
+   The structure is editorial because the pub is named after the newspaper
+   office that stood next door, and the walls are hung with framed front pages
+   of famous headlines. Masthead, rules, kickers, a billing for the listings.
+
+   TWO LOOKS, ONE SITE. A class on <html> picks between them; LOOK in
+   tools/data.py sets which one goes live.
+
+   PAPER       Black on newsprint and no colour at all. Weight, scale and rules
+               carry the hierarchy, the way they do on a real front page.
+
+   TEAL & OAK  The same newspaper, hung in the pub. The teal of the sign board
+   .look-oak   and timbers on Ballymoney Street, and the oak panelling and
+               frames inside, all taken off Owen's photographs of the building
+               and then solved for WCAG contrast against the TEXTURED paper and
+               the textured wood, since those are what the colours sit on.
+
+   Every accent below goes through the semantic tokens (--link, --mark,
+   --band and friends). Paper maps them all back onto black; Teal and Oak maps
+   them onto the building, and the block at the end of this file adds the
+   materials.
+   =========================================================================== */
+
+:root{
+  --paper:#FAF9F6;
+  --paper-2:#F1EFE9;
+  --paper-3:#E7E4DC;
+  --ink:#111110;
+  --ink-2:#3A3733;
+  --ash:#615B55;
+  --dim:#6C655D;          /* 4.5:1 on every paper tone, WCAG AA */
+  --rule:#DCD8D0;      /* decorative separators only */
+  --rule-2:#BEB8AE;    /* decorative borders only */
+  --line:#969086;      /* 3:1, for anything that is a control boundary */
+
+  /* The building, for the Teal and Oak look. Sampled from Owen's photographs
+     (sign board #536E81, shutters #5C7E92, frames #4F3B2D), then solved for
+     contrast rather than picked by eye. Figures are in the README. */
+  --teal:#33687C;      /* text on paper: 5.60 / 5.12 / 4.62:1 on the textured tones */
+  --teal-line:#4D869C; /* borders and marks only: 3.03:1 at worst */
+  --sign:#3D6476;      /* the board itself, as a ground: paper text 6.08:1 */
+  --sign-deep:#2F4F5E; /* its moulding, and hover: paper text 8.31:1 */
+  --sign-ink:#D6E2E6;  /* quieter text on the board: 4.84:1 */
+  --oak:#3B2C20;       /* the frames round the front pages inside */
+  --oak-edge:#1E150E;  /* the outside edge of a frame */
+  --oak-lip:#7A5C3F;   /* the inside edge of a frame, catching the light */
+  --wood:url(../img/oak.jpg?v=3);  /* the panelling, tools/photos.py job 4 */
+  --rail:url(../img/rail.jpg?v=1);  /* the dado rail along the edge of it */
+  --rail-h:clamp(20px,2.5vw,32px);
+  --on-wood-2:#EEE7DC;    /* quieter text on the wood: 8.66:1 at its lightest grain */
+  --on-wood-teal:#B0D4E0; /* teal text on the wood: 6.75:1 at its lightest grain */
+  --on-wood-line:#7FB2C3; /* teal rules on the wood: 4.59:1 at its lightest grain */
+
+  /* What each look paints with. These are the Paper values, which are exactly
+     what the site used before any colour went in; .look-oak remaps them. */
+  --link:var(--ink);
+  --link-hover:var(--ash);
+  --kicker:var(--dim);          /* the small caps at the right of a desk */
+  --kicker-2:var(--ash);        /* the small caps over a headline */
+  --mark:var(--ink);            /* focus rings, the open dot, the next gig */
+  --mark-line:var(--rule-2);    /* the rule under a "more" link */
+  --band:var(--ink);            /* the inverted bands */
+  --band-sep:rgb(250 249 246 / .55); /* the stars between ticker items */
+
+  --serif:"Bodoni Moda",Georgia,"Times New Roman",serif;
+  --cond:"Oswald","Arial Narrow",Arial,sans-serif;
+  --sans:"Source Sans 3",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+
+  --step--1:clamp(.78rem,.76rem + .1vw,.84rem);
+  --step-0:clamp(1rem,.97rem + .16vw,1.08rem);
+  --step-1:clamp(1.18rem,1.1rem + .4vw,1.4rem);
+  --step-2:clamp(1.45rem,1.3rem + .75vw,1.95rem);
+  --step-3:clamp(1.8rem,1.5rem + 1.5vw,2.8rem);
+  --step-4:clamp(2.2rem,1.6rem + 2.9vw,4rem);
+
+  --ease:cubic-bezier(.23,1,.32,1);
+  color-scheme:light;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+*{margin:0}
+html{-webkit-text-size-adjust:100%}
+/* No global scroll-behavior:smooth. Chrome applies it to the mouse wheel as well
+   as to anchor jumps, which makes ordinary scrolling feel laggy and rubber-bandy.
+   Anchor links get smoothed in site.js instead, where it can be opted out of. */
+
+/* --- the sheet it is all printed on ------------------------------------
+   Real newsprint, photographed by Owen off the framed front pages hanging in
+   the bar and turned into a tile by tools/photos.py. Body columns only: no
+   nameplates, no headlines, no photographs, because those are the parts that
+   make a front page recognisable.
+
+   Its strength is a contrast budget, not a taste. 2.25% average darkening
+   leaves muted text at 5.22:1 on --paper and 4.77:1 on --paper-2, both clear
+   of the 4.5:1 AA line. Re-run photos.py to see the figures; raise STRENGTH in
+   it and it will tell you when it stops passing.
+
+   The ?v= is because _headers caches /assets/img/* for a day. Bump it if the
+   tile is ever regenerated with different settings, or people keep the old
+   one. */
+body{
+  background-color:var(--paper);
+  background-image:url(../img/newsprint.jpg?v=2);
+  background-size:700px auto;
+  color:var(--ink);
+  font-family:var(--sans);font-size:var(--step-0);line-height:1.65;
+  overflow-wrap:break-word;-webkit-font-smoothing:antialiased;
+}
+img,picture,iframe,svg{max-width:100%}
+/* the width attribute is what the browser honours when max-width bites, so
+   without this every photograph in a narrow column renders squashed */
+img{height:auto}
+picture{display:contents}
+a{color:var(--link);text-decoration-thickness:1px;text-underline-offset:.16em}
+a:hover{color:var(--link-hover)}
+:focus-visible{outline:3px solid var(--mark);outline-offset:3px}
+
+::selection{background:var(--ink);color:var(--paper)}
+.skip{position:absolute;left:-9999px;top:0;background:var(--ink);color:var(--paper);
+      padding:.7rem 1.1rem;font-family:var(--cond);font-weight:600;z-index:100}
+.skip:focus{left:.5rem;top:.5rem}
+
+.sheet{max-width:62rem;margin-inline:auto;padding-inline:clamp(1rem,4.5vw,2rem)}
+/* the running head is fixed, so anchored targets need room above them */
+[id]{scroll-margin-top:4.5rem}
+
+/* ---------------------------------------------------------------- masthead */
+.rule{border-top:1px solid var(--rule-2)}
+.rule--d{border-top:3px solid var(--ink);border-bottom:1px solid var(--ink);height:5px}
+
+.mast{padding-top:clamp(.9rem,3.5vw,1.6rem)}
+.mast__kicker{font-family:var(--cond);font-weight:500;font-size:clamp(.6rem,2.3vw,.74rem);
+  letter-spacing:.2em;text-transform:uppercase;color:var(--ash);text-align:center;padding:.5rem 0}
+.mast__kicker a{color:var(--ash);text-decoration:none}
+.mast__kicker a{color:inherit}
+.mast__kicker a:hover{color:var(--link)}
+
+.mast__name{display:block;color:var(--ink);text-decoration:none;
+  padding:.5rem 0 .7rem}
+.mast__name:hover{color:var(--ink)}
+.mast__the{display:block;font-family:var(--serif);font-weight:700;text-align:center;
+  font-size:clamp(.78rem,3.2vw,1.5rem);letter-spacing:.34em;line-height:1;
+  color:var(--ash);margin-bottom:.2em;padding-left:.34em}
+
+/* --- the nameplate ------------------------------------------------------
+   Real SVG text, so the words stay selectable and crawlable. The stroke is
+   drawn on first visit only, then the fill arrives underneath it. */
+.plate{display:block;width:100%;height:auto;max-width:54rem;margin-inline:auto}
+.plate__t{font-family:var(--serif);font-weight:900;letter-spacing:-.02em;
+  fill:var(--ink);stroke:var(--ink);stroke-width:1.1;
+  stroke-linejoin:round;stroke-linecap:round;paint-order:stroke fill}
+/* a ghost of the fill while the pen travels, so the nameplate is never
+   fully invisible even if the animation fails to start */
+.plate.is-drawing .plate__t{fill:color-mix(in oklab,var(--ink) 9%,transparent)}
+.plate.is-drawn .plate__t{fill:var(--ink);transition:fill .5s var(--ease)}
+@media (prefers-reduced-motion:reduce){
+  .plate__t{fill:var(--ink)!important;stroke-dasharray:none!important;
+    stroke-dashoffset:0!important;transition:none!important}
+}
+
+.mast__stand{font-family:var(--cond);font-weight:500;text-align:center;
+  font-size:clamp(.68rem,2.8vw,.86rem);letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ink-2);padding:.55rem 0}
+
+/* ---------------------------------------------------------------- nav */
+.nav{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;
+     gap:0 clamp(.6rem,2.4vw,1.7rem);padding:.6rem 0;border-bottom:1px solid var(--rule)}
+.nav__a{font-family:var(--cond);font-weight:500;font-size:clamp(.74rem,2.7vw,.88rem);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--ink);text-decoration:none;
+  padding:.3rem 0;border-bottom:2px solid transparent;transition:border-color .18s var(--ease)}
+.nav__a:hover{border-bottom-color:var(--rule-2)}
+.nav__a[aria-current=page]{font-weight:600;border-bottom-color:var(--ink)}
+.nav__burger{display:none;font-family:var(--cond);font-weight:500;font-size:.85rem;
+  letter-spacing:.14em;text-transform:uppercase;background:none;border:1px solid var(--ink);
+  color:var(--ink);padding:.45rem 1rem;cursor:pointer;min-height:44px}
+/* eight sections since Room Hire went in: below 44rem they no longer fit on
+   one line, so the menu button takes over rather than leave one hanging */
+@media (max-width:44rem){
+  .nav__a{display:none}
+  .nav__burger{display:block}
+}
+
+/* drawer */
+.drawer{position:fixed;inset:0;z-index:60;background:rgba(17,17,16,.5)}
+.drawer[hidden]{display:none}
+.drawer__panel{position:absolute;inset:0 0 0 auto;width:min(20rem,86vw);background:var(--paper);
+  border-left:1px solid var(--ink);padding:1.3rem;display:flex;flex-direction:column;gap:.2rem;
+  overflow-y:auto}
+.drawer__x{align-self:flex-end;font-family:var(--cond);letter-spacing:.14em;text-transform:uppercase;
+  font-size:.8rem;background:none;border:1px solid var(--line);color:var(--ink);
+  padding:.5rem .9rem;cursor:pointer;margin-bottom:.8rem;min-height:44px}
+.drawer__a{font-family:var(--cond);font-weight:500;font-size:1.1rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink);text-decoration:none;padding:.7rem 0;
+  border-bottom:1px solid var(--rule)}
+.drawer__a[aria-current=page]{font-weight:600}
+.drawer__tel{font-family:var(--cond);font-size:1.1rem;letter-spacing:.06em;color:var(--ink);
+  text-decoration:none;padding-top:1.1rem}
+
+/* ---------------------------------------------------------------- status chip */
+.status{display:flex;flex-wrap:wrap;align-items:center;gap:.45rem .7rem;padding:.9rem 0 0;
+  font-family:var(--cond);font-size:.82rem;letter-spacing:.1em;text-transform:uppercase}
+.status__dot{width:.5rem;height:.5rem;border-radius:50%;background:var(--mark);flex:none}
+.status__x{color:var(--ash)}
+
+/* ---------------------------------------------------------------- crumbs */
+.crumbs{font-family:var(--cond);font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--dim);padding:.9rem 0 0}
+.crumbs a{color:var(--ash);text-decoration:none}
+.crumbs a{color:inherit}
+.crumbs a:hover{color:var(--link)}
+.crumbs__s{padding:0 .5rem;color:var(--rule-2)}
+
+/* ---------------------------------------------------------------- lead */
+.lead{padding:clamp(1.8rem,7vw,3.4rem) 0 clamp(1.4rem,5vw,2.4rem)}
+.lead__kick,.head__kick{font-family:var(--cond);font-weight:600;font-size:.82rem;
+  letter-spacing:.26em;text-transform:uppercase;color:var(--kicker-2);margin-bottom:.7rem}
+.lead__h{font-family:var(--serif);font-weight:700;font-size:var(--step-4);line-height:1.06;
+  letter-spacing:-.018em;margin-bottom:.7rem}
+.lead__sub{font-size:var(--step-1);color:var(--ash);max-width:40ch;line-height:1.5}
+.lead__cta{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.5rem}
+
+.btn{display:inline-block;font-family:var(--cond);font-weight:500;font-size:.9rem;
+  letter-spacing:.16em;text-transform:uppercase;text-decoration:none;cursor:pointer;
+  background:var(--ink);color:var(--paper);border:1px solid var(--ink);
+  padding:.8rem 1.5rem;min-height:44px;line-height:1.5;
+  transition:background .18s var(--ease),transform .12s var(--ease)}
+.btn:hover{background:var(--ink-2);border-color:var(--ink-2);color:var(--paper)}
+.btn:active{transform:scale(.98)}
+.btn--ghost{background:none;color:var(--ink);border-color:var(--line)}
+.btn--ghost:hover{background:none;color:var(--ink);border-color:var(--ink)}
+@media (hover:none){.btn:not(.btn--ghost):hover{background:var(--ink)}}
+
+/* ---------------------------------------------------------------- head block */
+.head{padding:clamp(1.6rem,6vw,2.8rem) 0 clamp(1rem,4vw,1.8rem)}
+.head--tall{padding:clamp(3rem,12vw,6rem) 0}
+.head h1{font-family:var(--serif);font-weight:700;font-size:var(--step-3);line-height:1.08;
+  letter-spacing:-.015em;margin-bottom:.6rem}
+.head__sub{font-size:var(--step-1);color:var(--ash);max-width:48ch;line-height:1.55}
+
+/* ---------------------------------------------------------------- bands */
+.band{padding:clamp(1.6rem,6vw,2.8rem) 0;border-top:1px solid var(--rule)}
+/* the same sheet, shifted and at a different size, so the bands never line
+   up with the body behind them */
+.band--alt{background-color:var(--paper-2);
+  background-image:url(../img/newsprint.jpg?v=2);
+  background-size:560px auto;background-position:41px 17px}
+
+.desk{display:flex;align-items:baseline;gap:.9rem;border-bottom:2px solid var(--ink);
+  padding-bottom:.35rem;margin-bottom:1.1rem}
+.desk h2{font-family:var(--cond);font-weight:600;font-size:clamp(.95rem,3.3vw,1.1rem);
+  letter-spacing:.2em;text-transform:uppercase;white-space:nowrap}
+.desk i{flex:1;height:1px;background:var(--rule-2);min-width:1rem}
+.desk em{color:var(--kicker);font-family:var(--cond);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;
+  font-style:normal;white-space:nowrap}
+
+/* ---------------------------------------------------------------- billings */
+.bills{list-style:none;padding:0;margin:0}
+.bill{display:grid;grid-template-columns:8.5rem 1fr 9rem;gap:.3rem 1.2rem;align-items:start;
+  padding:.95rem 0;border-bottom:1px solid var(--rule);position:relative}
+.bill>*{min-width:0}
+.bill__when{font-family:var(--cond);line-height:1.25}
+.bill__when b{display:block;font-weight:600;font-size:.92rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink)}
+.bill__when i{display:block;font-style:normal;font-size:.82rem;letter-spacing:.1em;color:var(--ash)}
+.bill__kind{display:inline-flex;align-items:center;gap:.32em;font-family:var(--cond);
+  font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--paper);
+  background:var(--ink);padding:.2em .55em;margin-bottom:.3rem;line-height:1}
+.bill__kind svg{width:.86em;height:.86em;flex:none;display:block}
+.bill__t{display:block;font-family:var(--serif);font-weight:700;font-size:var(--step-1);
+  line-height:1.25}
+.bill__sub{display:block;font-family:var(--cond);font-size:.85rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ash);margin-top:.15rem}
+/* what it costs and who can come, where a poster says: plain words, not a label */
+.bill__note{display:block;margin-top:.3rem;font-size:.92rem;line-height:1.45;color:var(--ink-2)}
+/* Filled in by the browser, one line per row. Empty in the source, so a
+   reader with no JavaScript sees no status rather than a wrong one. */
+.bills__head{display:grid;grid-template-columns:8.5rem 1fr 9rem;gap:.3rem 1.2rem;
+  padding-bottom:.5rem;border-bottom:2px solid var(--ink);
+  font-family:var(--cond);font-size:.66rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--dim)}
+.bills__head span:last-child{text-align:right}
+.bill__status{font-family:var(--cond);font-size:.68rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--dim);white-space:nowrap;text-align:right;
+  line-height:1.5}
+.bill.is-past{opacity:.45}
+.bill.is-next{background:var(--paper-2);box-shadow:inset 3px 0 0 var(--mark);
+  margin-inline:-.9rem;padding-inline:.9rem}
+.band--alt .bill.is-next{background:var(--paper-3)}
+.bill.is-next .bill__status{color:var(--mark);font-weight:600}
+@media (max-width:34rem){
+  .bills__head{display:none}
+  .bill{grid-template-columns:1fr auto}
+  .bill__when{grid-column:1/-1;display:flex;gap:.7rem;align-items:baseline}
+  .bill__when b,.bill__when i{display:inline}
+}
+
+/* weekly pattern */
+.weeks{list-style:none;padding:0;margin:0;display:grid;gap:1px;background:var(--rule)}
+.week{display:grid;grid-template-columns:7rem 4.5rem 1fr;gap:.3rem 1.1rem;align-items:baseline;
+  background:var(--paper);padding:.95rem .2rem}
+.band--alt .week{background:var(--paper-2)}
+.week>*{min-width:0}
+.week__d{font-family:var(--cond);font-weight:600;font-size:.92rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink)}
+.week__t{font-family:var(--cond);font-size:.92rem;letter-spacing:.1em;color:var(--ash)}
+.week__n{font-family:var(--serif);font-weight:700;font-size:var(--step-1);line-height:1.3}
+.week__n i{font-family:var(--sans);font-style:normal;font-weight:400;font-size:.9rem;
+  color:var(--ash);line-height:1.5}
+@media (max-width:34rem){
+  .week{grid-template-columns:1fr auto}
+  .week__n{grid-column:1/-1;margin-top:.2rem}
+}
+
+/* ---------------------------------------------------------------- layout bits */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.2rem,4vw,2.6rem);align-items:start}
+.split>*{min-width:0}
+.split--map{grid-template-columns:1fr 1.1fr}
+@media (max-width:48rem){.split,.split--map{grid-template-columns:1fr}}
+
+.big{font-family:var(--serif);font-weight:700;font-size:var(--step-2);line-height:1.2;
+  margin-bottom:.8rem}
+.band p+p{margin-top:.8rem}
+.band p{color:var(--ash)}
+.band .big{color:var(--ink)}
+.more{display:inline-block;font-family:var(--cond);font-size:.85rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--link);text-decoration:none;margin-top:1rem;
+  border-bottom:1px solid var(--mark-line);padding-bottom:.15rem}
+.more:hover{color:var(--ink);border-bottom-color:var(--ink)}
+p.more{display:block}
+
+.ph{border:1px solid var(--rule-2);display:grid;place-items:center;
+  background:radial-gradient(circle,rgba(17,17,16,.16) 1.1px,transparent 1.2px) 0 0/7px 7px,
+             var(--paper-2);width:100%}
+.ph span{font-family:var(--cond);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ash);background:var(--paper);padding:.4em .9em;border:1px solid var(--rule-2);
+  text-align:center;max-width:85%}
+
+/* the one inverted band: ink on paper flipped over */
+.strip{background:var(--band);color:var(--paper);padding:clamp(1.4rem,5vw,2.2rem) 0}
+.strip__h{font-family:var(--serif);font-weight:700;font-size:var(--step-2);line-height:1.2}
+.strip__cta{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.1rem}
+.strip .btn{background:var(--paper);border-color:var(--paper);color:var(--band)}
+.strip .btn:hover{background:var(--paper-2);border-color:var(--paper-2);color:var(--ink)}
+.strip .btn--ghost{background:none;color:var(--paper);border-color:rgba(250,249,246,.4)}
+.strip .btn--ghost:hover{background:none;color:var(--paper);border-color:var(--paper)}
+
+.box{border:3px double var(--ink);padding:clamp(1.1rem,4vw,1.8rem)}
+.box h3{font-family:var(--serif);font-weight:700;font-size:var(--step-2);line-height:1.15;
+  margin-bottom:.6rem}
+.box p{color:var(--ash)}
+.box .btn{margin-top:1rem}
+
+.awards{list-style:none;padding:0;margin:0;display:grid;gap:1px;background:var(--rule)}
+.award{background:var(--paper);padding:1rem .2rem;display:grid;
+  grid-template-columns:5rem 1fr;gap:.2rem 1.1rem;align-items:baseline}
+.band--alt .award{background:var(--paper-2)}
+.award>*{min-width:0}
+.award b{font-family:var(--cond);font-weight:600;font-size:1.05rem;letter-spacing:.1em;
+  color:var(--ink)}
+.award span{font-family:var(--serif);font-weight:700;font-size:var(--step-1);line-height:1.25}
+.award i{grid-column:2;font-style:normal;font-size:.92rem;color:var(--ash)}
+@media (max-width:30rem){
+  .award{grid-template-columns:1fr}
+  .award i{grid-column:1}
+}
+
+/* ---------------------------------------------------------------- Q&A */
+.qas{border-top:1px solid var(--rule)}
+.qa{border-bottom:1px solid var(--rule)}
+.qa h3{margin:0}
+.qa__q{width:100%;text-align:left;background:none;border:0;cursor:pointer;color:var(--ink);
+  font-family:var(--serif);font-weight:700;font-size:var(--step-1);line-height:1.35;
+  padding:1.05rem 2.2rem 1.05rem 0;position:relative;min-height:44px}
+.qa__q::after{content:"+";position:absolute;right:.2rem;top:50%;transform:translateY(-50%);
+  font-family:var(--cond);font-weight:400;font-size:1.5rem;color:var(--ash);line-height:1}
+.qa__q[aria-expanded=true]::after{content:"\2013"}
+.qa__q:hover{color:var(--ash)}
+.qa__a{padding:0 0 1.1rem}
+.qa__a p{color:var(--ash)}
+
+/* ---------------------------------------------------------------- forms */
+.form{display:block}
+.field{display:block;margin-bottom:1.1rem}
+.field label{display:block;font-family:var(--cond);font-weight:500;font-size:.84rem;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--ash);margin-bottom:.4rem}
+.field input,.field textarea,.field select{width:100%;font:inherit;font-size:1rem;
+  background:var(--paper);color:var(--ink);border:1px solid var(--line);
+  padding:.7rem .8rem;border-radius:0;min-height:44px}
+.field textarea{min-height:8rem;resize:vertical}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--ink);outline:none}
+.field input:focus-visible,.field textarea:focus-visible,.field select:focus-visible{
+  outline:3px solid var(--ink);outline-offset:2px}
+.err{display:block;font-family:var(--cond);font-size:.8rem;letter-spacing:.08em;
+  color:var(--ink);font-weight:600;margin-top:.35rem;min-height:1.1em}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.note{font-size:.92rem;color:var(--dim);margin-top:1rem}
+.note a{color:var(--ash)}
+.unknown{font-size:.98rem;color:var(--ash);border-left:3px solid var(--ink);padding-left:1rem}
+
+/* hours + map */
+.hours{width:100%;border-collapse:collapse}
+.hours th,.hours td{text-align:left;padding:.5rem 0;border-bottom:1px solid var(--rule);
+  font-size:.98rem}
+.hours th{font-family:var(--cond);font-weight:500;font-size:.85rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ash);width:8rem}
+.hours td{color:var(--ink)}
+.map{width:100%;aspect-ratio:4/3;border:1px solid var(--rule-2);display:block}
+
+.prose{max-width:42rem}
+.prose h2{font-family:var(--cond);font-weight:600;font-size:1.05rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink);margin:1.8rem 0 .5rem}
+.prose h2:first-child{margin-top:0}
+.prose p{color:var(--ash)}
+
+/* ---------------------------------------------------------------- footer */
+.foot{margin-top:clamp(2rem,7vw,3.5rem);padding-bottom:2.5rem}
+.foot__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));
+  gap:1.6rem;padding:1.6rem 0}
+.foot__grid>*{min-width:0}
+.foot p{color:var(--ash);font-size:.94rem}
+.foot a{color:var(--ash);text-decoration:none;display:block;padding:.18rem 0;font-size:.94rem}
+.foot a:hover{color:var(--ink)}
+.foot__name{font-family:var(--serif);font-weight:700;font-size:var(--step-1);color:var(--ink);
+  margin-bottom:.4rem}
+.foot__h{font-family:var(--cond);font-weight:600;font-size:.78rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink);margin-bottom:.5rem}
+.foot__end{font-family:var(--cond);font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--dim);text-align:center;border-top:1px solid var(--rule);padding-top:1.2rem}
+
+/* ===========================================================================
+   MOTION
+   The pub is a newspaper, so the motion is press mechanics: rules that draw
+   themselves, type that settles, a running head that arrives on the second
+   page. Nothing bounces. Everything is transform and opacity, so it stays
+   smooth on a phone, and all of it is off under prefers-reduced-motion.
+   =========================================================================== */
+
+/* --- reveals ------------------------------------------------------------ */
+[data-reveal]{opacity:0;transform:translateY(16px)}
+[data-reveal].in{opacity:1;transform:none;
+  transition:opacity .55s var(--ease),transform .55s var(--ease)}
+
+/* --- section rules draw in from the left -------------------------------- */
+.desk{position:relative;border-bottom-color:var(--rule)}
+.desk::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;
+  background:var(--ink);transform:scaleX(0);transform-origin:left center;
+  transition:transform .7s var(--ease) .05s}
+.desk.in::after{transform:scaleX(1)}
+
+/* --- the lead headline settles line by line ----------------------------- */
+.lead__h .ln{display:block;overflow:hidden}
+.lead__h .ln > span{display:block;transform:translateY(105%);
+  transition:transform .8s var(--ease)}
+.lead__h.in .ln > span{transform:none}
+.lead__h.in .ln:nth-child(2) > span{transition-delay:.09s}
+
+/* --- generic stagger ----------------------------------------------------
+   Any container marked data-stagger holds its children back and lets them
+   in one after another. Used by the billing, the weekly pattern, the awards,
+   the questions, the contact form and the privacy prose, so every page gets
+   it without hand-listing each list. */
+[data-stagger][data-reveal]{opacity:1;transform:none}
+[data-stagger] > *{opacity:0;transform:translateY(12px)}
+[data-stagger].in > *{opacity:1;transform:none;
+  transition:opacity .5s var(--ease),transform .5s var(--ease);
+  transition-delay:calc(var(--i,0) * 55ms)}
+
+/* past gigs stay faded whether or not they have been revealed */
+.bill.is-past{opacity:.45}
+[data-stagger].in > .bill.is-past{opacity:.45}
+
+/* the next-up row draws its marker down the edge */
+.bill.is-next{box-shadow:none}
+.bill.is-next::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--mark);transform:scaleY(0);transform-origin:top center;
+  transition:transform .55s var(--ease) .25s}
+.bills.in .bill.is-next::before{transform:scaleY(1)}
+
+/* the questions get a slightly quicker cadence, there are more of them */
+.qas[data-stagger].in > *{transition-delay:calc(var(--i,0) * 45ms)}
+.prose[data-stagger].in > *{transition-delay:calc(var(--i,0) * 40ms)}
+
+/* --- running head ------------------------------------------------------- */
+.runhead{position:fixed;top:0;left:0;right:0;z-index:50;
+  background:color-mix(in oklab,var(--paper) 93%,transparent);
+  -webkit-backdrop-filter:saturate(1.1) blur(9px);backdrop-filter:saturate(1.1) blur(9px);
+  border-bottom:1px solid var(--ink);
+  transform:translateY(-102%);transition:transform .34s var(--ease);will-change:transform}
+.runhead.on{transform:none}
+.runhead__in{display:flex;align-items:center;gap:1rem;justify-content:space-between;
+  padding-block:.5rem}
+.runhead__in>*{min-width:0}
+.runhead__name{font-family:var(--serif);font-weight:900;font-size:1.02rem;
+  letter-spacing:-.012em;color:var(--ink);text-decoration:none;white-space:nowrap}
+.runhead__mid{font-family:var(--cond);font-size:.7rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ash);overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
+.runhead__burger{font-family:var(--cond);font-weight:500;font-size:.76rem;letter-spacing:.14em;
+  text-transform:uppercase;background:var(--ink);border:1px solid var(--ink);color:var(--paper);
+  padding:.42rem .9rem;cursor:pointer;flex:none;min-height:36px}
+.runhead__burger:hover{background:var(--ink-2);border-color:var(--ink-2)}
+.runhead__bar{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--ink);
+  transform:scaleX(0);transform-origin:left center;display:block}
+@media (max-width:34rem){.runhead__mid{display:none}}
+
+/* --- hover, pointer devices only ---------------------------------------- */
+@media (hover:hover) and (pointer:fine){
+  .bill{transition:background .22s var(--ease)}
+  .bill:hover{background:var(--paper-2)}
+  .band--alt .bill:hover{background:var(--paper-3)}
+  .bill:hover .bill__kind{background:var(--ink)}
+
+  .nav__a{position:relative}
+  .nav__a::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;
+    background:var(--ink);transform:scaleX(0);transform-origin:right center;
+    transition:transform .26s var(--ease)}
+  .nav__a:hover::after{transform:scaleX(1);transform-origin:left center}
+  .nav__a:hover{border-bottom-color:transparent}
+
+  .more{position:relative;transition:padding-right .24s var(--ease)}
+  .more::after{content:"\2192";position:absolute;right:0;opacity:0;
+    transition:opacity .24s var(--ease),transform .24s var(--ease);transform:translateX(-4px)}
+  .more:hover{padding-right:1.4rem}
+  .more:hover::after{opacity:1;transform:none}
+
+  .week{transition:background .22s var(--ease)}
+  .week:hover{background:var(--paper-2)}
+  .band--alt .week:hover{background:var(--paper-3)}
+
+  .qa__q::after{transition:transform .26s var(--ease)}
+  .qa__q[aria-expanded=true]::after{transform:translateY(-50%) rotate(180deg)}
+}
+
+/* --- masthead nameplate settles on load --------------------------------- */
+@keyframes fp-plate{from{opacity:0;transform:translateY(10px) scale(.985)}
+                    to{opacity:1;transform:none}}
+@keyframes fp-rule{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.mast__name{animation:fp-plate .75s var(--ease) both}
+.mast .rule,.mast .rule--d{transform-origin:left center;
+  animation:fp-rule .85s var(--ease) both}
+.mast .rule--d:first-child{animation-delay:0s}
+.mast__kicker{animation:fp-plate .6s var(--ease) .08s both}
+.mast__stand{animation:fp-plate .6s var(--ease) .16s both}
+
+/* --- if the reader has asked the OS for more contrast, give it ---------- */
+@media (prefers-contrast:more){
+  :root{--ash:#3A3733;--dim:#3A3733;--rule:#9C958B;--rule-2:#6F6960;--line:#3A3733;
+    --teal:#234C5B;--teal-line:#234C5B;--sign:#2A4654;--sign-deep:#1E3440;
+    --oak:#2A1F16}
+  .desk i{background:var(--rule-2)}
+}
+
+/* --- respect the setting ------------------------------------------------ */
+@media (prefers-reduced-motion:reduce){
+  [data-reveal],[data-reveal].in,
+  [data-stagger] > *,[data-stagger].in > *{
+    opacity:1!important;transform:none!important;transition:none!important}
+  .bill.is-past,[data-stagger].in > .bill.is-past{opacity:.45!important}
+  .desk::after{transform:scaleX(1);transition:none}
+  .bill.is-next::before{transform:scaleY(1);transition:none}
+  .lead__h .ln > span{transform:none;transition:none}
+  .runhead{transition:none}
+  .mast__name,.mast .rule,.mast .rule--d,.mast__kicker,.mast__stand{animation:none}
+  .btn:active{transform:none}
+}
+
+/* ===========================================================================
+   BORROWED, BUT NATIVE
+   Three devices taken from the reference sites, kept because a newspaper
+   already does all three anyway.
+   =========================================================================== */
+
+/* --- 1. the ticker ------------------------------------------------------
+   All three references run a marquee. A paper runs a strapline across the
+   top of the page, so this is the same device with the right accent. */
+.ticker{border-top:1px solid var(--band);border-bottom:1px solid var(--band);
+  background:var(--band);color:var(--paper);overflow:hidden;padding:.55rem 0;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.ticker__row{display:flex;width:max-content;align-items:center;
+  animation:fp-ticker 46s linear infinite;will-change:transform}
+.ticker__row span{font-family:var(--cond);font-weight:500;
+  font-size:clamp(.72rem,2.6vw,.88rem);letter-spacing:.24em;text-transform:uppercase;
+  white-space:nowrap;padding:0 1.1rem}
+.ticker__row i{font-style:normal;font-size:.6em;color:var(--band-sep);line-height:1}
+@keyframes fp-ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker:hover .ticker__row{animation-play-state:paused}
+
+/* --- 2. numbered nav in the drawer -------------------------------------- */
+.drawer__a{display:flex;align-items:baseline;gap:.9rem}
+.drawer__n{font-family:var(--cond);font-size:.72rem;letter-spacing:.14em;
+  color:var(--dim);flex:none;width:1.6rem}
+.drawer__a[aria-current=page] .drawer__n{color:var(--ink)}
+
+/* --- 3. the masthead again, at the foot ---------------------------------
+   A paper carries its nameplate on the back page too. Clipped at the
+   baseline so it reads as a printed edge rather than a watermark. */
+.foot__plate{margin-top:1.5rem;padding-inline:clamp(1rem,4.5vw,2rem)}
+.fplate{display:block;width:100%;height:auto;max-width:70rem;margin-inline:auto}
+.fplate__t{font-family:var(--serif);font-weight:900;letter-spacing:-.02em;
+  fill:var(--ink);opacity:.085}
+
+@media (prefers-reduced-motion:reduce){
+  .ticker__row{animation:none;transform:none}
+  .ticker{-webkit-mask-image:none;mask-image:none}
+}
+
+/* --- torn newsprint edges ------------------------------------------------
+   Only on the inverted band, where paper meets ink and a tear actually reads.
+   Filled with the paper tone so the dark band looks ripped out of the sheet.
+   Turn the whole thing off with TORN_EDGES in tools/data.py. */
+.strip{position:relative}
+.torn{position:absolute;left:0;width:100%;height:clamp(14px,2.2vw,26px);
+  display:block;pointer-events:none;z-index:1}
+.torn--top{top:-1px}
+.torn--bottom{bottom:-1px;transform:scaleY(-1)}
+.strip .sheet{position:relative;z-index:2}
+
+/* ===========================================================================
+   THE BUNDLE
+   A folded newspaper that unravels, turns its pages, and lands flat as the
+   front page, at which point the nameplate draws on it.
+
+   Driven by CSS, not JavaScript. If the script never loads it still plays and
+   still gets out of the way: the script only SKIPS it on a second visit in the
+   same session, and tidies the nodes away afterwards. Every sheet is hidden by
+   backface-visibility the instant it passes edge on, and the whole thing is
+   pointer-events:none, so the site underneath stays live and clickable and
+   there is no state this can strand anyone in. Home page only.
+   =========================================================================== */
+.flip{position:absolute;top:0;left:0;width:100%;height:100svh;z-index:150;
+  pointer-events:none;perspective:1700px;perspective-origin:50% 42%;
+  animation:fp-flip-gone 1ms linear 5100ms forwards}
+.no-turn .flip{display:none}
+
+/* Plain paper under the stack and over the page, so the masthead is not
+   sitting in full view behind a small folded bundle. It goes while the sheets
+   are at full size and still covering everything, so the fade is never seen. */
+.flip__veil{position:absolute;inset:0;z-index:1;background:var(--paper);
+  animation:fp-veil 140ms linear 4350ms forwards}
+
+/* the bundle: small, tilted back, sitting low, then rising and flattening */
+/* Perspective, but deliberately NOT preserve-3d. Sharing one 3D space is
+   what let two tilted pages cut through each other: the renderer works
+   out where the planes intersect and draws half of one in front of the
+   other. Flattening each page before compositing keeps the foreshortening
+   and makes the pile behave like paper, front to back by paint order. */
+.flip__stack{position:absolute;inset:0;z-index:2;transform-style:flat;
+  perspective:1300px;perspective-origin:50% 42%;
+  transform-origin:50% 50%;
+  animation:fp-unfold 4300ms cubic-bezier(.36,.02,.2,1) forwards}
+
+/* each page. The first one dealt is the one you see on top. */
+.flip__p{position:absolute;inset:0;z-index:calc(40 - var(--n));
+  transform-origin:left center;transform-style:preserve-3d;
+  --delay:calc(2064ms + var(--n) * 110ms);
+  animation:fp-flip 600ms cubic-bezier(.4,0,.55,1) var(--delay) forwards}
+
+/* The opacity lives on the leaf, never on .flip__p: an element whose opacity
+   is animated has its transform-style forced to flat, and .flip__p has to stay
+   preserve-3d for the pile to have any depth at all. */
+.flip__leaf{animation:fp-thick 2100ms cubic-bezier(.36,.02,.2,1) forwards,
+  fp-leaf-out 600ms linear var(--delay) forwards}
+
+/* The front page does not scatter. The newsprint fades off it first, then the
+   paper, and the name stays put while the site arrives underneath. */
+.flip__p--front{animation:none}
+.flip__p--front .flip__leaf{animation:fp-thick 2100ms cubic-bezier(.36,.02,.2,1)
+  forwards, fp-front-out 380ms ease 4600ms forwards}
+.flip__p--front .flip__col,
+.flip__p--front .flip__clip{animation:fp-cols-out 320ms ease 4280ms forwards}
+
+/* the pub's own name, printed on the front page. Put exactly over the real
+   masthead by site.js, so the zoom brings the two into register by itself. */
+/* Just a positioned box. site.js clones the masthead into it and pins it
+   to the real one's measured rect, so the two are the same markup under
+   the same stylesheet and cannot drift apart. Empty until then. */
+.flip__mast{position:absolute;left:8%;width:84%;top:6%;z-index:20;
+  background:inherit;display:block;text-align:center}
+/* the copy is laid out exactly like the real masthead, margins and all */
+
+/* The visible sheet, and the thing that holds its place in the pile. Pushed
+   back on Z so the bundle has real depth rather than being four coincident
+   planes, which is all it was before. */
+.flip__leaf{position:absolute;inset:0;
+  background:var(--paper-2);border:1px solid var(--rule-2);
+  box-shadow:5px 0 22px rgba(17,17,16,.16);
+  display:flex;gap:clamp(.8rem,2.6vw,1.8rem);overflow:hidden;
+  padding:clamp(1.2rem,4vw,2.6rem) clamp(.9rem,3.4vw,2.2rem)}
+.flip__p:nth-child(even) .flip__leaf{background:var(--paper)}
+/* the bottom of the pile carries the weight of the whole bundle */
+.flip__p--front .flip__leaf{box-shadow:5px 0 22px rgba(17,17,16,.16),
+  0 18px 30px rgba(17,17,16,.26)}
+
+/* Extra layers behind the four real pages. Nothing but paper and an edge:
+   four leaves will only ever look like four leaves, and a bundle needs a pile.
+   Gone before the stack reaches full size. */
+/* The fade sits on the children, never on this wrapper. An element whose
+   opacity is being animated has its transform-style forced to flat, which
+   collapsed every layer in here onto one plane and undid the whole point. */
+.flip__wad{position:absolute;inset:0;z-index:30}
+.flip__wad i{position:absolute;inset:0;display:block;background:var(--paper-2);
+  border:1px solid var(--rule-2);
+  transform:translate(calc(var(--k) * 4px),
+            calc(232px + var(--k) * 30px));
+  animation:fp-wad 2100ms cubic-bezier(.4,0,.5,1) forwards}
+
+/* The cord round the bundle. Two bands, each in two halves, so that when it
+   goes it can actually break: the halves pull taut, then whip away from the
+   centre in opposite directions, rotating and going slack. Direction and spin
+   are per half, so the two ends never mirror each other exactly. */
+.flip__tie{position:absolute;z-index:80;display:block;
+  /* 700ms, not 760: the pile's jolt peaks at 1161ms and the cord has to have
+   parted before it, or the bundle appears to shrug the cord off rather
+   than the cord letting go of the bundle. Taut to 1084, hauled tight at
+   1115, broken by 1140. */
+  animation:fp-snap 620ms cubic-bezier(.3,.72,.4,1) 700ms forwards}
+.flip__tie--l,.flip__tie--r{top:44.2%;height:4.2%;
+  background:linear-gradient(180deg,var(--dim),var(--ink) 48%,var(--dim))}
+.flip__tie--t,.flip__tie--b{left:42.4%;width:3.4%;
+  background:linear-gradient(90deg,var(--dim),var(--ink) 48%,var(--dim))}
+.flip__tie--l{left:-3%;right:50%;--sx:-62%;--sy:-24%;--sr:-31deg}
+.flip__tie--r{left:50%;right:-3%;--sx:60%;--sy:18%;--sr:27deg}
+.flip__tie--t{top:-3%;bottom:50%;--sx:-17%;--sy:-58%;--sr:25deg}
+.flip__tie--b{top:50%;bottom:-3%;--sx:15%;--sy:57%;--sr:-23deg}
+
+/* the half folded over the front, and the paper hiding the half it covers */
+.flip__lid{position:absolute;left:0;right:0;top:0;height:50%;z-index:60;
+  transform-origin:50% 100%;background:var(--paper-2);
+  border:1px solid var(--rule-2);box-shadow:0 12px 24px rgba(17,17,16,.2);
+  animation:fp-lid 2100ms cubic-bezier(.3,.86,.36,1) forwards}
+.flip__mask{position:absolute;left:0;right:0;top:0;height:50%;z-index:55;
+  background:var(--paper);animation:fp-mask 260ms linear 1720ms forwards}
+
+/* the fold down the middle, gone by the time it is open */
+.flip__crease{position:absolute;inset:0;z-index:50;pointer-events:none;
+  background:linear-gradient(180deg,transparent 45%,rgba(17,17,16,.26) 50%,
+    transparent 55%);
+  animation:fp-crease 2100ms ease-out forwards}
+
+.flip__col{flex:1;display:flex;flex-direction:column;gap:.4rem;min-width:0}
+.flip__col i{display:block;flex:none;height:.38rem;width:var(--w,100%);
+  background:var(--ash);opacity:.8;border-radius:0}
+.flip__hl{height:.9rem!important;opacity:.92!important;
+  background:var(--ink)!important;margin-bottom:.3rem;
+  border-top:1px solid var(--ash);margin-top:1rem}
+.flip__hl:first-child{border-top:0;margin-top:0}
+/* A photograph in newsprint is a dot screen over a mid tone, not a grey box. */
+.flip__img{height:5rem!important;opacity:1!important;width:100%!important;
+  border:1px solid var(--ink);
+  background:radial-gradient(var(--ink) .5px,transparent .6px) 0 0/3px 3px,
+             linear-gradient(160deg,var(--ash),var(--ink-2))!important}
+/* A block of body type as one painted gradient rather than one box per line.
+   This is the single biggest reason the opening is cheap enough to be smooth:
+   it took the overlay from 865 elements to under 200. */
+/* Half the line pitch it had, and darker ink. At a tight pitch a gradient
+   stops reading as ruled lines and starts reading as type, which is the whole
+   difference between newsprint and a loading skeleton. */
+.flip__tx{height:var(--h,110px)!important;width:100%!important;
+  opacity:.5!important;border-radius:0!important;
+  background:repeating-linear-gradient(to bottom,var(--ink) 0 1.5px,
+    transparent 1.5px var(--lead,6px))!important}
+
+/* A clipping lying across the columns, some of them turned right round. The
+   headline bars and the block of type are all background layers on the one
+   element, so the whole collage costs sixteen nodes. */
+.flip__clip{position:absolute!important;left:var(--l);top:var(--t);
+  width:var(--w)!important;height:var(--h)!important;
+  transform:rotate(var(--r));transform-origin:50% 50%;
+  border:1px solid var(--ash);opacity:.95!important;
+  box-shadow:0 2px 6px rgba(17,17,16,.14);
+  background:
+    linear-gradient(var(--ink),var(--ink)) 7% 9%/64% 5px no-repeat,
+    linear-gradient(var(--ink),var(--ink)) 7% 21%/38% 4px no-repeat,
+    repeating-linear-gradient(to bottom,var(--ink) 0 1.5px,
+      transparent 1.5px 6px) 7% 34%/86% 58% no-repeat,
+    var(--paper)!important}
+
+/* Four poses, not two. The middle pair hold it small and lying at an angle
+   while the pages whip over, which is the beat the references spend most of
+   their time in. Only the last stretch is the zoom. */
+@keyframes fp-unfold{
+  0%,24%{transform:translateY(17%) rotateX(66deg) rotateY(-15deg) rotateZ(-4deg)
+         scale(.18)}
+  /* the jolt as the cord lets go, and then the settle */
+  27%{transform:translateY(16.4%) rotateX(65deg) rotateY(-15deg)
+      rotateZ(-3.4deg) scale(.199)}
+  /* 29% and 39% are identical: an untied bundle, sitting there, doing
+     nothing at all for 430ms. The break needs somewhere to land. */
+  29%,39%{transform:translateY(16.6%) rotateX(65deg) rotateY(-15deg)
+          rotateZ(-3.6deg) scale(.192)}
+  /* 53% and 79% are deliberately identical. The pile holds absolutely
+     still, at one fixed scale, for the whole of the scatter. A parent
+     whose scale is changing forces every composited child to be
+     re-rasterised, and during the scatter there are eight of them. The
+     zoom happens afterwards, once only three layers are left. */
+  48%,78%{transform:translateY(6%) rotateX(42deg) rotateY(-10deg)
+          rotateZ(-3deg) scale(.46)}
+  /* Square up while still small. The zoom that follows is a straight
+     scale on a flat page, which is what the reference actually shows:
+     resolving the tilt and the scale together meant the page was never
+     flat until the very last frame. */
+  87%{transform:translateY(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg)
+      scale(.54)}
+  100%{transform:none}}
+/* each sheet's place in the pile, collapsing to nothing. This is the whole
+   difference between a bundle and a sheet held at an angle. */
+/* Z is the one axis scale() does not touch, so these offsets keep their pixel
+   size while the bundle is small and become negligible once it is full size.
+   That is exactly the behaviour wanted: thick when folded, flat when open.
+   It also means the numbers have to be small. At 26px a leaf sat 24px clear of
+   its neighbour on an object only 78px tall, which read as four sheets thrown
+   down rather than one pile. */
+/* Was a push back on Z, and the numbers here look far too big for what they
+   do. They are not: scale() does not touch Z, so the old offsets kept their
+   pixel size while the bundle was small, which is exactly what made it look
+   thick. A drop DOES scale with the bundle, so at 0.18 the same figures came
+   out at 3px of pile instead of 44. These are the old ones divided by the
+   bundle scale. They collapse to nothing by 1700ms either way. */
+@keyframes fp-thick{
+  0%,78%{transform:translate(calc(var(--n) * 4px),calc(var(--n) * 30px))
+         rotate(calc(var(--n) * -.5deg))}
+  84%{transform:translate(calc(var(--n) * 5.5px),calc(var(--n) * 40px))
+      rotate(calc(var(--n) * -.9deg))}
+  100%{transform:none}}
+@keyframes fp-lid{
+  0%,78%{transform:rotateX(172deg)}
+  92%{transform:rotateX(8deg);opacity:1}
+  100%{transform:rotateX(0deg);opacity:0}}
+@keyframes fp-mask{from{opacity:1}to{opacity:0}}
+/* taut and bright, then gone. The break sits at 58 to 71 percent, which with
+   the delay above puts it at about 1130ms: the instant before the fold opens. */
+@keyframes fp-snap{
+  0%,62%{transform:translate(0,0) rotate(0deg) scale(1);opacity:.72}
+  /* hauled tight, then gone over about sixty milliseconds */
+  67%{transform:translate(calc(var(--sx) * -.09),calc(var(--sy) * -.09))
+      rotate(0deg) scale(1.08);opacity:1}
+  71%{transform:translate(calc(var(--sx) * .42),calc(var(--sy) * .42))
+      rotate(calc(var(--sr) * .5)) scale(.9);opacity:.8}
+  100%{transform:translate(var(--sx),var(--sy)) rotate(var(--sr)) scale(.78);
+       opacity:0}}
+@keyframes fp-wad{0%,78%{opacity:1}100%{opacity:0}}
+/* Off the pile, towards the reader, tumbling. Direction, distance, yaw,
+   pitch and roll are all per page, set inline by the generator from an even
+   fan around the circle, so they leave in every direction and no two show the
+   same face on the way out. Fallbacks on every var: one bad custom property
+   would invalidate the whole transform and the page would simply not move. */
+@keyframes fp-flip{
+  from{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg) rotateZ(0deg)}
+  to{transform:translate3d(var(--dx,84%),var(--dy,-17%),var(--dz,330px))
+     rotateX(var(--rx,42deg)) rotateY(var(--ry,0deg)) rotateZ(var(--rz,-30deg))}}
+@keyframes fp-leaf-out{0%,62%{opacity:1}100%{opacity:0}}
+@keyframes fp-cols-out{to{opacity:0}}
+@keyframes fp-front-out{to{opacity:0}}
+@keyframes fp-crease{0%,78%{opacity:1}100%{opacity:0}}
+@keyframes fp-veil{from{opacity:1}to{opacity:0}}
+/* Chrome will not hold visibility:hidden through a forwards fill, whatever the
+   keyframes say, so this leans on opacity, which it does hold. site.js removes
+   the node outright a moment later when it is there to do it. */
+@keyframes fp-flip-gone{to{opacity:0;visibility:hidden}}
+
+/* narrower sheets hold fewer columns, the way a tabloid does, and a phone
+   turns three pages rather than four: four viewport sized composited layers
+   is a lot to ask of a cheap handset for one second of animation. */
+@media (max-width:46rem){.flip__col:nth-child(n+4){display:none}}
+@media (max-width:30rem){
+  .flip__col:nth-child(n+3){display:none}
+  /* one fewer page to whip over. Never the fourth: that one is the front
+     page the zoom pushes into. */
+  .flip__p:nth-child(2),.flip__p:nth-child(4),.flip__p:nth-child(6){
+    display:none}
+}
+
+/* Anyone who has asked for less motion gets the front page straight away. */
+@media (prefers-reduced-motion:reduce){.flip{display:none}}
+
+/* --- stop press ---------------------------------------------------------
+   The one question somebody outside the door at nine on a Saturday night is
+   actually asking. Hidden in the markup and revealed by script, so a reader
+   with no JavaScript gets no empty box: the standing line above it already
+   says there is music every Saturday, which is the honest fallback. */
+.press{padding-block:clamp(1.2rem,4vw,2rem)}
+.press__box{border:3px solid var(--ink);background:var(--paper-2);
+  padding:clamp(1.1rem,3.6vw,1.75rem)}
+.press__kick{margin:0 0 .45rem;font-family:var(--cond);font-size:.7rem;
+  letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}
+.press__h{margin:0 0 .5rem;font-family:var(--serif);font-weight:900;
+  font-size:clamp(1.7rem,6.2vw,2.9rem);line-height:1.04;letter-spacing:-.02em}
+.press__sub{margin:0;font-size:1rem;line-height:1.55;max-width:46ch;
+  color:var(--ink-2)}
+/* something is actually happening right now, so the box turns itself over */
+.press__box.is-on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.press__box.is-on .press__kick{color:var(--paper-3)}
+.press__box.is-on .press__sub{color:var(--paper-2)}
+
+/* --- nothing else moves while the intro is playing ----------------------
+   The ticker is an infinite marquee on a row wider than the screen, with a
+   layer of its own, and it was repainting every frame of the intro behind an
+   opaque veil for nobody to see. site.js lifts this the moment the paper has
+   gone. The page itself is untouched: still in the document, still scrollable,
+   still tappable. This defers work, it does not hide anything. */
+.fp-intro .ticker__row{animation-play-state:paused}
+
+/* --- what people have said ----------------------------------------------
+   Real reviews, real names, linked to where they were written. No star
+   ratings and no aggregateRating markup: see the note in tools/data.py. */
+.says{list-style:none;padding:0;margin:0;display:grid;gap:1px;
+  background:var(--rule)}
+@media (min-width:46rem){.says{grid-template-columns:1fr 1fr}
+  /* an odd one out runs the full width rather than leaving a hole */
+  .say:last-child:nth-child(odd){grid-column:1/-1}}
+.say{background:var(--paper-2);padding:1.3rem 1.2rem 1.1rem;position:relative}
+.say blockquote{margin:0;font-family:var(--serif);font-size:var(--step-1);
+  line-height:1.4;text-wrap:pretty}
+.say blockquote::before{content:"\201C";font-family:var(--serif);
+  font-size:2.4em;line-height:0;color:var(--rule-2);
+  margin-right:.08em;vertical-align:-.28em}
+.say cite{display:block;margin-top:.9rem;font-family:var(--cond);
+  font-style:normal;font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-2)}
+.say cite span{color:var(--dim)}
+.say cite span::before{content:" \00B7 "}
+.says__out{margin:0;font-family:var(--serif);font-size:var(--step-1);
+  line-height:1.45;max-width:46ch}
+.says__out a{text-decoration:underline;text-underline-offset:.18em}
+
+/* --- a photograph running the width of the page -------------------------- */
+.shot{margin:0;padding-block:clamp(1.2rem,4vw,2rem)}
+.shot picture,.shot img{display:block;width:100%;height:auto;
+  border:1px solid var(--rule-2)}
+.shot figcaption{margin-top:.6rem;font-family:var(--cond);font-size:.78rem;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+  padding-inline:clamp(1rem,4.5vw,2rem)}
+@media (min-width:52rem){
+  .shot{padding-inline:clamp(1rem,4.5vw,2rem)}
+  .shot figcaption{padding-inline:0}
+}
+
+/* --- a photograph inside a two-column band ------------------------------- */
+/* On Paper it takes the same hairline as every other photograph. The Teal
+   and Oak look puts it back in an oak frame, like the one it hangs in. */
+.split__shot{margin:0;align-self:start}
+.split__shot img{display:block;width:100%;border:1px solid var(--rule-2)}
+.split__shot figcaption{margin-top:.6rem;font-family:var(--cond);font-size:.72rem;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+
+/* --- drinks ------------------------------------------------------------------
+   The price list is set like the market prices page of a paper: a table per
+   section, the drink in the serif, what it is in the condensed caps under it,
+   and the prices in their own right aligned columns in figures that line up.
+   The Guinness review is set as a pull quote, because it is the one thing a
+   customer said about the drinks that says something only this pub can claim. */
+.pull{margin:0}
+.pull p{font-family:var(--serif);font-weight:700;font-size:var(--step-3);
+  line-height:1.12;letter-spacing:-.015em;text-wrap:balance;color:var(--ink)}
+.pull p::before{content:"\201C";color:var(--rule-2);margin-right:.04em}
+.pull p::after{content:"\201D";color:var(--rule-2);margin-left:.02em}
+.pull cite{display:block;margin-top:.8rem;font-family:var(--cond);font-style:normal;
+  font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
+.pull cite span{color:var(--dim)}
+.pull cite span::before{content:" \00B7 "}
+.pull--small{margin-top:1.6rem;padding-top:1.2rem;border-top:1px solid var(--rule)}
+.pull--small p{font-size:var(--step-1);line-height:1.4;font-weight:400}
+.band .pull p{color:var(--ink)}
+.split--solo{grid-template-columns:1fr}
+
+.menu{background:var(--paper);border:3px double var(--ink);
+  padding:clamp(1.1rem,4vw,2.1rem) clamp(1.1rem,4vw,2.1rem) .1rem}
+/* Two newspaper columns rather than a grid of pairs: the sections run down
+   one column and on into the next, so seven sections of different lengths
+   come out level at the bottom instead of leaving one stranded on its own. */
+@media (min-width:52rem){.menu{columns:2;column-gap:clamp(1.8rem,5vw,3.2rem)}}
+.menu__sec{min-width:0;break-inside:avoid;margin-bottom:clamp(1.6rem,4.5vw,2.4rem)}
+.menu__h{font-family:var(--cond);font-weight:600;font-size:1rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink);padding-bottom:.35rem;
+  border-bottom:2px solid var(--ink)}
+.menu__t{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums lining-nums}
+.menu__t thead th{font-family:var(--cond);font-weight:500;font-size:.66rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--dim);text-align:right;
+  padding:.45rem 0 .35rem .9rem;white-space:nowrap}
+.menu__t thead th:first-child{text-align:left;padding-left:0}
+.menu__t tbody th,.menu__t td{padding:.6rem 0;border-bottom:1px solid var(--rule);
+  vertical-align:baseline}
+.menu__t tbody tr:last-child th,.menu__t tbody tr:last-child td{border-bottom:0}
+.menu__t tbody th{text-align:left;font-weight:400}
+.menu__t tbody th b{display:block;font-family:var(--serif);font-weight:700;
+  font-size:var(--step-1);line-height:1.25;color:var(--ink)}
+.menu__t tbody th i{display:block;margin-top:.1rem;font-style:normal;
+  font-family:var(--cond);font-size:.74rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ash);line-height:1.4}
+.menu__t td{text-align:right;white-space:nowrap;padding-left:.9rem;
+  font-family:var(--cond);font-weight:500;font-size:1.05rem;letter-spacing:.03em;
+  color:var(--ink)}
+.menu__note{margin-top:.55rem;font-size:.9rem;color:var(--ash)}
+.band .menu__note{margin-top:.55rem}
+.menu__sample{display:inline-block;margin:0 0 1rem;padding:.45rem .8rem;
+  border:1px dashed var(--line);font-family:var(--cond);font-size:.74rem;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);background:var(--paper)}
+.band .menu__sample{color:var(--ink-2)}
+
+/* ===========================================================================
+   THE TEAL AND OAK LOOK                                 <html class="look-oak">
+
+   The same newspaper, hung in the pub. Paper stays paper, and the nameplate,
+   the headlines, the body type and the listings stay black on it, because
+   that part IS the newspaper. Everything round the newspaper becomes the
+   building it hangs in:
+
+   OUTSIDE   the teal of the sign board, the shutters and the timbers on
+             Ballymoney Street. The rules that hold the page together become
+             the timbers, the running head, the ticker, the address strip and
+             the menu become the sign board, and the buttons are painted in it.
+
+   INSIDE    the oak. The band about the name, the awards, and the foot of
+             every page are the panelled wall itself, made from Owen's
+             photograph of it. Anything that is a notice hangs on the page in
+             an oak frame, like the front pages do.
+
+   The intro is untouched in this look on purpose: it is a newspaper landing
+   on a table, and it lands on the front page, which is paper in both.
+   =========================================================================== */
+.look-oak{
+  --link:var(--teal);
+  --link-hover:var(--sign-deep);
+  --kicker:var(--teal);
+  --kicker-2:var(--teal);
+  --mark:var(--teal);
+  --mark-line:var(--teal-line);
+  --band:var(--sign);
+  --band-sep:var(--sign-ink);
+}
+.look-oak ::selection{background:var(--sign);color:var(--paper)}
+
+/* --- the timbers --------------------------------------------------------- */
+.look-oak .rule--d{border-top-color:var(--sign);border-bottom-color:var(--sign)}
+.look-oak .rule{border-top-color:var(--teal-line)}
+.look-oak .mast__the,.look-oak .mast__kicker{color:var(--teal)}
+.look-oak .mast__kicker a:hover{color:var(--ink)}
+.look-oak .nav{border-bottom-color:var(--teal-line)}
+.look-oak .nav__a[aria-current=page]{border-bottom-color:var(--sign)}
+.look-oak .nav__burger{border-color:var(--sign);color:var(--sign)}
+.look-oak .desk::after{background:var(--sign)}
+.look-oak .bills__head{border-bottom-color:var(--sign)}
+.look-oak .crumbs__s{color:var(--teal-line)}
+
+/* --- painted in the sign colour ------------------------------------------ */
+.look-oak .btn{background:var(--sign);border-color:var(--sign);color:var(--paper)}
+.look-oak .btn:hover{background:var(--sign-deep);border-color:var(--sign-deep);color:var(--paper)}
+.look-oak .btn--ghost{background:none;color:var(--teal);border-color:var(--teal-line)}
+.look-oak .btn--ghost:hover{background:none;color:var(--sign-deep);border-color:var(--sign)}
+@media (hover:none){.look-oak .btn:not(.btn--ghost):hover{background:var(--sign)}}
+
+.look-oak .bill__kind{background:var(--sign)}
+.look-oak .week__d,.look-oak .award b,.look-oak .hours th,
+.look-oak .press__kick,.look-oak .qa__q::after{color:var(--teal)}
+.look-oak .say blockquote::before{color:var(--teal-line)}
+.look-oak .unknown{border-left-color:var(--sign)}
+.look-oak .field input:focus,.look-oak .field textarea:focus,
+.look-oak .field select:focus{border-color:var(--sign)}
+.look-oak .field input:focus-visible,.look-oak .field textarea:focus-visible,
+.look-oak .field select:focus-visible{outline-color:var(--teal)}
+.look-oak .shot img,.look-oak .map{border-color:var(--oak)}
+
+/* --- the sign board: running head, ticker, address strip, menu -----------
+   The board on the building has a darker moulding along its top and bottom
+   edges, so the bands carry one too. Anything focusable on the board gets a
+   paper focus ring, since a teal one would vanish into it. */
+.look-oak .runhead{background:var(--sign);border-bottom-color:var(--sign-deep);
+  -webkit-backdrop-filter:none;backdrop-filter:none}
+.look-oak .runhead__name{color:var(--paper)}
+.look-oak .runhead__mid{color:var(--sign-ink)}
+.look-oak .runhead__burger{background:var(--paper);border-color:var(--paper);color:var(--sign)}
+.look-oak .runhead__burger:hover{background:var(--paper-2);border-color:var(--paper-2);
+  color:var(--sign-deep)}
+.look-oak .runhead__bar{background:var(--sign-ink);bottom:0}
+
+.look-oak .ticker{border-top-color:var(--sign-deep);border-bottom-color:var(--sign-deep);
+  box-shadow:inset 0 2px 0 var(--sign-deep),inset 0 -2px 0 var(--sign-deep)}
+
+.look-oak .strip{box-shadow:inset 0 4px 0 var(--sign-deep),inset 0 -4px 0 var(--sign-deep)}
+.look-oak .strip .btn{background:var(--paper);border-color:var(--paper);color:var(--sign)}
+.look-oak .strip .btn:hover{background:var(--paper-2);border-color:var(--paper-2);
+  color:var(--sign-deep)}
+.look-oak .strip .btn--ghost{background:none;color:var(--paper);
+  border-color:rgb(250 249 246 / .55)}
+.look-oak .strip .btn--ghost:hover{background:none;color:var(--paper);border-color:var(--paper)}
+
+.look-oak .drawer{background:rgb(20 13 8 / .55)}
+.look-oak .drawer__panel{background:var(--sign);border-left:4px solid var(--sign-deep)}
+.look-oak .drawer__a,.look-oak .drawer__tel{color:var(--paper)}
+.look-oak .drawer__a{border-bottom-color:rgb(250 249 246 / .2)}
+.look-oak .drawer__n{color:var(--sign-ink)}
+.look-oak .drawer__a[aria-current=page] .drawer__n{color:var(--paper)}
+.look-oak .drawer__x{color:var(--paper);border-color:var(--sign-ink)}
+
+.look-oak .runhead :focus-visible,.look-oak .strip :focus-visible,
+.look-oak .drawer :focus-visible{outline-color:var(--paper)}
+
+/* --- oak frames -----------------------------------------------------------
+   The frames round the front pages in the bar: dark oak, a lighter inside
+   edge where the moulding catches the light, the page sitting back behind
+   it, and a shadow on the wall underneath. The wood is the same photograph
+   as the wall, clipped to the border so only the frame shows it. */
+.look-oak .press__box,.look-oak .box{border:9px solid transparent;
+  background:linear-gradient(var(--paper-2),var(--paper-2)) padding-box,
+             var(--oak) var(--wood) 0 0/620px auto border-box;
+  box-shadow:inset 0 0 0 1px var(--oak-lip),inset 0 5px 10px -6px rgb(20 13 8 / .45),
+             0 0 0 1px var(--oak-edge),0 18px 30px -18px rgb(20 13 8 / .55)}
+.look-oak .box{background:linear-gradient(var(--paper),var(--paper)) padding-box,
+             var(--oak) var(--wood) 0 0/620px auto border-box}
+
+/* the notice turns over when something is actually on: the sign colour,
+   still in its frame */
+.look-oak .press__box.is-on{
+  background:linear-gradient(var(--sign),var(--sign)) padding-box,
+             var(--oak) var(--wood) 0 0/620px auto border-box;color:var(--paper)}
+.look-oak .press__box.is-on .press__kick,
+.look-oak .press__box.is-on .press__sub{color:var(--sign-ink)}
+
+/* the framed page, framed again: a slip of lighter oak inside the moulding */
+.look-oak .split__shot img{border:10px solid transparent;padding:2px;
+  background:linear-gradient(var(--oak-lip),var(--oak-lip)) padding-box,
+             var(--oak) var(--wood) 0 0/620px auto border-box;
+  box-shadow:0 0 0 1px var(--oak-edge),0 22px 34px -18px rgb(10 6 3 / .7)}
+
+/* --- the wall -------------------------------------------------------------
+   Panelling, from the photograph, at roughly the size it is on the wall
+   relative to the type. Pinned to the bottom of the band, so the rail in the
+   tile lands along the bottom edge where a real one would be rather than
+   through the middle of the words, and centred, so the stiles fall just
+   outside the text column and the panel face sits behind the text. A dark
+   line top and bottom where the wall meets the paper. */
+.look-oak .band--wall,.look-oak .foot{
+  background:var(--oak) var(--wood) 50% 100%/1100px auto;color:var(--paper);
+  box-shadow:inset 0 1px 0 var(--oak-edge),inset 0 -1px 0 var(--oak-edge)}
+.look-oak .band--wall{border-top:0}
+/* --- the dado rail ----------------------------------------------------------
+   Where plaster meets panelling in a real room there is always a rail: a
+   moulding of the same wood that caps the panels, catches the light along its
+   top and throws a shadow down the wall. It is what makes the two read as one
+   wall rather than two things pushed together, so every wood band has one
+   along each edge, cut from the same moulding as the stiles.
+
+   Lit from above, like the room: the top rail's shadow falls down the panels,
+   the bottom rail's falls onto the paper below it, and a hairline marks where
+   each meets the paper. The rails replace the plain edge lines. */
+.look-oak .band--wall,.look-oak .foot{position:relative}
+.look-oak .band--wall{box-shadow:none;
+  padding-top:calc(clamp(1.6rem,6vw,2.8rem) + var(--rail-h));
+  padding-bottom:calc(clamp(1.6rem,6vw,2.8rem) + var(--rail-h))}
+.look-oak .foot{box-shadow:none;padding-top:calc(clamp(1.2rem,4vw,2rem) + var(--rail-h))}
+.look-oak .band--wall::before,.look-oak .band--wall::after,.look-oak .foot::before{
+  content:"";position:absolute;left:0;right:0;height:var(--rail-h);z-index:1;
+  pointer-events:none;background:var(--oak) var(--rail) 0 50%/auto 100% repeat-x}
+.look-oak .band--wall::before,.look-oak .foot::before{top:0;
+  box-shadow:inset 0 1px 0 rgb(255 236 210 / .2),inset 0 -1px 0 rgb(8 5 2 / .65),
+             0 -1px 0 rgb(30 21 14 / .35),0 10px 12px -7px rgb(8 5 2 / .8)}
+.look-oak .band--wall::after{bottom:0;
+  box-shadow:inset 0 1px 0 rgb(255 236 210 / .2),inset 0 -1px 0 rgb(8 5 2 / .65),
+             0 1px 0 rgb(30 21 14 / .45),0 12px 16px -9px rgb(20 13 8 / .5)}
+
+/* A soft dark edge under every letter on the wood, so small type sits on the
+   grain instead of in it. Not a glow: one pixel down, barely blurred. */
+.look-oak .band--wall,.look-oak .foot{text-shadow:0 1px 2px rgb(10 6 3 / .7)}
+/* a phone stacks everything, so the bands get tall: size the tile by its
+   height there, so it still stands taller than the band */
+@media (max-width:40rem){
+  .look-oak .band--wall,.look-oak .foot{background-size:auto 1080px}
+}
+
+.look-oak .band--wall .desk{border-bottom-color:rgb(250 249 246 / .22)}
+.look-oak .band--wall .desk h2,.look-oak .band--wall .big,
+.look-oak .band--wall .award span{color:var(--paper)}
+.look-oak .band--wall .desk i{background:rgb(250 249 246 / .24)}
+.look-oak .band--wall .desk em,.look-oak .band--wall .award b{color:var(--on-wood-teal)}
+.look-oak .band--wall .desk::after{background:var(--on-wood-line)}
+.look-oak .band--wall p,.look-oak .band--wall figcaption,
+.look-oak .band--wall .award i{color:var(--on-wood-2)}
+.look-oak .band--wall .more{color:var(--on-wood-teal);border-bottom-color:var(--on-wood-line)}
+.look-oak .band--wall .more:hover{color:var(--paper);border-bottom-color:var(--paper)}
+/* on the wall, the awards are plaques in a row rather than cells on paper */
+.look-oak .band--wall .awards{background:none;gap:0;
+  border-top:1px solid rgb(250 249 246 / .18)}
+.look-oak .band--wall .award{background:none;border-bottom:1px solid rgb(250 249 246 / .18)}
+
+/* the foot of every page is the wall too, with the nameplate cut into it */
+/* (the footer's top padding is set with the rail above) */
+/* the footer's small print is a size up on the wood, where it has more to beat */
+.look-oak .foot p,.look-oak .foot a{font-size:1rem}
+.look-oak .foot .rule--d{border-top-color:var(--on-wood-line);
+  border-bottom-color:var(--on-wood-line)}
+.look-oak .foot p,.look-oak .foot a,.look-oak .foot__end{color:var(--on-wood-2)}
+.look-oak .foot a:hover{color:var(--paper)}
+/* both are paragraphs, so they need the extra class to beat .foot p */
+.look-oak .foot .foot__name{color:var(--paper)}
+.look-oak .foot .foot__h{color:var(--on-wood-teal)}
+.look-oak .foot__end{border-top-color:rgb(250 249 246 / .18)}
+/* The nameplate at the foot, cut into the panel: pale letters with a dark
+   edge along the top, where a real incision catches the shadow. Readable,
+   and still quieter than anything a reader actually needs. */
+.look-oak .fplate__t{fill:#D9CFBF;opacity:.3}
+.look-oak .fplate{filter:drop-shadow(0 -1px 0 rgb(8 5 2 / .8))
+  drop-shadow(0 1px 0 rgb(255 245 230 / .1))}
+
+.look-oak .band--wall :focus-visible,
+.look-oak .foot :focus-visible{outline-color:var(--on-wood-teal)}
+
+@media (hover:hover) and (pointer:fine){
+  .look-oak .bill:hover .bill__kind{background:var(--sign-deep)}
+  .look-oak .nav__a::after{background:var(--sign)}
+}
+
+/* anyone who asked the OS for more contrast gets flat oak with no grain
+   behind the text, and the darker colours from the tokens above */
+@media (prefers-contrast:more){
+  .look-oak .band--wall,.look-oak .foot{background-image:none}
+}
+
+/* --- drinks, in the Teal and Oak look -------------------------------------
+   The price list hangs on the panelled wall in an oak frame, like the front
+   pages do, so it is paper again inside the frame: none of the wall's pale
+   text colours or its letter shadow apply to it. */
+.look-oak .menu{border:9px solid transparent;
+  background:linear-gradient(var(--paper),var(--paper)) padding-box,
+             var(--oak) var(--wood) 0 0/620px auto border-box;
+  box-shadow:inset 0 0 0 1px var(--oak-lip),inset 0 5px 10px -6px rgb(20 13 8 / .45),
+             0 0 0 1px var(--oak-edge),0 24px 36px -20px rgb(10 6 3 / .75);
+  text-shadow:none;color:var(--ink)}
+.look-oak .menu__h{border-bottom-color:var(--sign)}
+.look-oak .menu__t thead th{color:var(--teal)}
+.look-oak .band--wall .menu p.menu__note{color:var(--ash)}
+.look-oak .pull p::before,.look-oak .pull p::after{color:var(--teal-line)}
+/* the sample line sits on the wall, above the frame */
+.look-oak .band--wall .menu__sample{background:var(--paper);color:var(--ink-2);
+  border-color:var(--line);text-shadow:none}
+
+/* ===========================================================================
+   THE LOGO
+   The pub's own artwork, made transparent from the JPEGs Owen was given
+   (tools/photos.py, job 5), so it can sit on any ground without a black box.
+
+   In the masthead it is painted on a board, the way the name is painted on
+   the fascia on Ballymoney Street: the sign teal, with the darker moulding
+   along its top and bottom edges. The opening newspaper clones this whole
+   board onto its front page, so when the paper fades the logo is already
+   exactly where it will stay and nothing moves.
+   =========================================================================== */
+.mast__name{display:block;margin:.55rem 0 .6rem;text-decoration:none;
+  padding:clamp(.8rem,3vw,1.6rem) clamp(.8rem,5vw,3rem);background:var(--ink);
+  transition:background-color .9s var(--ease),box-shadow .9s var(--ease)}
+.look-oak .mast__name{background:var(--sign);
+  box-shadow:inset 0 4px 0 var(--sign-deep),inset 0 -4px 0 var(--sign-deep)}
+
+/* the logo itself: traced shapes, one path per letter, rope and hatch line,
+   each with pathLength="1" so one dash offset on the group draws them all */
+.plate--logo{display:block;width:100%;max-width:44rem;height:auto;margin-inline:auto}
+.plate__g{fill:#FCFAF6;stroke:none}
+
+/* Drawn on once per visit by site.js: hidden behind a full dash offset, then
+   drawn back with a pen, then filled. The board is in colour throughout; only
+   the copy printed on the opening newspaper is black and white (below). With
+   no script, reduced motion, or a second page in the same visit, the logo is
+   simply there. */
+.plate--logo.is-drawing .plate__g{fill:rgb(252 250 246 / .09);stroke:#FCFAF6;
+  stroke-width:3;stroke-linejoin:round;stroke-linecap:round;
+  stroke-dasharray:1 1;stroke-dashoffset:1}
+.plate--logo.is-drawn .plate__g{transition:fill .5s var(--ease)}
+
+/* The copy printed on the newspaper's front page is always black and white,
+   rules and lettering included: it is newsprint. The colour arrives when the
+   paper goes and the real masthead is left. */
+.flip__mast .mast__name,.look-oak .flip__mast .mast__name{background:var(--ink);
+  box-shadow:none;transition:none}
+.flip__mast .plate__g{fill:#FCFAF6!important;stroke:none!important}
+.flip__mast .rule--d,.look-oak .flip__mast .rule--d{border-top-color:var(--ink);
+  border-bottom-color:var(--ink)}
+.flip__mast .rule,.look-oak .flip__mast .rule{border-top-color:var(--rule-2)}
+.flip__mast .mast__kicker,.look-oak .flip__mast .mast__kicker,
+.flip__mast .mast__stand{color:var(--ink-2)}
+
+/* the front page's columns sit under the masthead and to its width, so the
+   page reads as one newspaper rather than a logo dropped onto a stock page */
+.flip__p--front .flip__leaf{
+  padding-top:var(--mast-clear,clamp(1.2rem,4vw,2.6rem));
+  padding-inline:max(clamp(.9rem,3.4vw,2.2rem),calc((100% - 62rem) / 2 + clamp(1rem,4.5vw,2rem)))}
+.flip__p--front .flip__clip{top:max(var(--t),calc(var(--mast-clear,0px) + 1.5rem))}
+
+@media (prefers-reduced-motion:reduce){
+  .plate--logo .plate__g{fill:#FCFAF6!important;stroke:none!important}
+  .mast__name{transition:none}
+}
+
+/* the small one, on the sign-board running head */
+.runhead__name{display:block;line-height:0}
+.runhead__name img{display:block;height:2.2rem;width:auto}
+html:not(.look-oak) .runhead__name img{filter:brightness(.16)}
+
+/* the slate one, painted on the panelling at the foot of every page */
+.foot__plate{padding-block:clamp(.6rem,3vw,1.4rem) clamp(1.6rem,5vw,2.6rem)}
+.flogo{display:block;width:100%;max-width:34rem;height:auto;margin-inline:auto}
+.look-oak .flogo{filter:drop-shadow(0 -1px 0 rgb(8 5 2 / .55)) drop-shadow(0 1px 0 rgb(255 240 220 / .07))}
+
+/* --- please drink responsibly --------------------------------------------
+   Set as a notice, not a footnote: the heading in the condensed capitals at
+   a real size, inside the newspaper's double rule, and in the Teal and Oak
+   look framed and hung on the wall like everything else that matters. */
+.responsibly{margin:clamp(1.6rem,4.5vw,2.4rem) auto 0;max-width:42rem;text-align:center;
+  background:var(--paper);border:3px double var(--ink);
+  padding:clamp(1.1rem,3.6vw,1.7rem) clamp(1rem,4vw,2.2rem)}
+.responsibly__h{margin:0 0 .55rem;font-family:var(--cond);font-weight:600;
+  font-size:clamp(1.45rem,5vw,2.15rem);line-height:1.15;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink);text-wrap:balance}
+.responsibly p{margin:0;font-size:1.08rem;line-height:1.5;color:var(--ink-2)}
+.responsibly p+p{margin-top:.3rem}
+.responsibly a{color:var(--link)}
+.look-oak .responsibly{border:9px solid transparent;
+  background:linear-gradient(var(--paper),var(--paper)) padding-box,
+             var(--oak) var(--wood) 0 0/620px auto border-box;
+  box-shadow:inset 0 0 0 1px var(--oak-lip),inset 0 5px 10px -6px rgb(20 13 8 / .45),
+             0 0 0 1px var(--oak-edge),0 18px 30px -18px rgb(10 6 3 / .6)}
+.look-oak .band--wall .responsibly{text-shadow:none}
+.look-oak .band--wall .responsibly p{color:var(--ink-2)}
+.look-oak .band--wall .responsibly .responsibly__h{color:var(--ink)}
+.look-oak .band--wall .responsibly a{color:var(--teal)}
+.look-oak .band--wall .responsibly :focus-visible{outline-color:var(--teal)}
+
+/* --- a photograph held to the column --------------------------------------
+   The bar photo on the Drinks page: full width on a phone, where it needs the
+   room, but on a desktop kept to the width of the text and cut to a wider
+   shape, so it sits in the page instead of filling the screen. The crop keeps
+   the taps and the Front Page plaque on the tower in view. */
+.shot--sheet{max-width:62rem;margin-inline:auto}
+@media (min-width:52rem){
+  .shot--sheet img{aspect-ratio:16/9;object-fit:cover;object-position:50% 38%}
+}
+
+/* --- the karaoke lounge ------------------------------------------------------
+   The booking card: the three facts from the bar's own poster set across it
+   like the boxed details in a classified ad, then the way to book. On the
+   panelled wall it is framed paper, so none of the wall's pale text colours
+   or its letter shadow reach inside it. */
+.lounge__facts{display:grid;grid-template-columns:auto auto minmax(0,1fr);
+  margin:1rem 0 1.1rem;border-top:1px solid var(--rule-2);border-bottom:1px solid var(--rule-2)}
+.lounge__facts>div{padding:.7rem .6rem .75rem;border-left:1px solid var(--rule)}
+.lounge__facts>div:last-child{padding-right:0}
+.lounge__facts>div:first-child{border-left:0;padding-left:0}
+.lounge__facts dt{font-family:var(--cond);font-weight:500;font-size:.72rem;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--kicker)}
+.lounge__facts dd{margin:.2rem 0 0;font-family:var(--serif);font-weight:700;
+  font-size:min(var(--step-1),4.9vw);line-height:1.15;color:var(--ink)}
+.lounge__cta{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.1rem}
+.box .lounge__cta .btn{margin-top:0}
+.look-oak .band--wall .box{text-shadow:none;color:var(--ink)}
+.look-oak .band--wall .box h3{color:var(--ink)}
+.look-oak .band--wall .box p{color:var(--ash)}
+.look-oak .band--wall .box :focus-visible{outline-color:var(--teal)}
+
+/* --- a featured night ---------------------------------------------------
+   One box above the listings for a night that is more than one act: what it
+   is called, what is on when, and the prize. Framed like the other boxes. */
+.feature{margin:0 0 1.6rem}
+.feature__kick{margin:0 0 .35rem;font-family:var(--cond);font-weight:600;font-size:.78rem;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--kicker)}
+.feature h3{margin:0;text-wrap:balance}
+.feature__list{list-style:none;margin:1rem 0 0;padding:0;display:grid;gap:.45rem}
+.feature__list li{display:grid;grid-template-columns:3.4rem minmax(0,1fr);gap:.8rem;align-items:baseline;
+  padding-bottom:.45rem;border-bottom:1px solid var(--rule)}
+.feature__list b{font-family:var(--cond);font-weight:600;font-size:.95rem;letter-spacing:.08em;color:var(--ink)}
+.feature__list span{color:var(--ink-2)}
+.box p.feature__prize{margin:1rem 0 0;font-family:var(--serif);font-weight:700;font-size:var(--step-1);
+  line-height:1.3;color:var(--ink)}
