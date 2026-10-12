@@ -1371,3 +1371,10 @@ html:not(.look-oak) .runhead__name img{filter:brightness(.16)}
 .feature__list span{color:var(--ink-2)}
 .box p.feature__prize{margin:1rem 0 0;font-family:var(--serif);font-weight:700;font-size:var(--step-1);
   line-height:1.3;color:var(--ink)}
+
+/* --- a seasonal line on the lounge card (Christmas bookings) --------------- */
+.box p.lounge__season{margin:0 0 1rem;padding:.65rem .85rem;border-radius:10px;background:#A3271C;color:#FFF8EE;
+  font-size:.95rem;line-height:1.4}
+.box p.lounge__season b{display:block;font-family:var(--cond);font-weight:600;font-size:.82rem;letter-spacing:.14em;
+  text-transform:uppercase;color:#FFE3B8;margin-bottom:.15rem}
+.look-oak .band--wall .box p.lounge__season{color:#FFF8EE}

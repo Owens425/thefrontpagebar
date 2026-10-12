@@ -282,10 +282,16 @@
           label = "Today";
           h = over ? "Open mic finished" : (started ? "Open mic on now" : "Open mic today");
           p = "From " + when + ". Free in, players welcome.";
-        } else {
+        } else if (kind === "live") {
           h = over ? "Music finished" : (started ? "Music on now" : "Music tonight");
           p = who + ", from " + when +
               ". Free in, no ticket, first come first served for a seat.";
+        } else {
+          /* anything else (a paint and sip, a special night): its own name,
+             and the line under it in the listing, which carries the price */
+          var extra = todays.querySelector(".bill__note");
+          h = over ? "Finished for tonight" : (started ? "On now" : "On tonight");
+          p = who + ", from " + when + "." + (extra ? " " + extra.textContent.trim() : "");
         }
         if ((over || later) && nextLine) { p += " " + nextLine; }
         if (over) { label = "Tonight, already been"; }
