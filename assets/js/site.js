@@ -283,7 +283,10 @@
           h = over ? "Open mic finished" : (started ? "Open mic on now" : "Open mic today");
           p = "From " + when + ". Free in, players welcome.";
         } else if (kind === "live") {
-          h = over ? "Music finished" : (started ? "Music on now" : "Music tonight");
+          /* an afternoon gig is on today, not tonight */
+          var isDay = startMin < 17 * 60;
+          if (isDay) { label = "Today"; }
+          h = over ? "Music finished" : (started ? "Music on now" : (isDay ? "Music today" : "Music tonight"));
           p = who + ", from " + when +
               ". Free in, no ticket, first come first served for a seat.";
         } else {
