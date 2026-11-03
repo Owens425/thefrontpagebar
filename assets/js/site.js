@@ -153,6 +153,24 @@
     });
   })();
 
+  /* ---------------------------------------------- a video, when it is asked for
+     The page shows our own copy of the picture and a plain link. The player only
+     comes from YouTube on a tap, so nothing of theirs loads before that. */
+  [].forEach.call(document.querySelectorAll("[data-video]"), function (a) {
+    a.addEventListener("click", function (e) {
+      e.preventDefault();
+      var f = document.createElement("iframe");
+      f.className = "feature__player";
+      f.src = "https://www.youtube-nocookie.com/embed/" + a.getAttribute("data-video") + "?autoplay=1&rel=0&playsinline=1";
+      f.title = a.getAttribute("data-title");
+      f.setAttribute("allow", "autoplay; encrypted-media; picture-in-picture; fullscreen");
+      f.setAttribute("allowfullscreen", "");
+      f.setAttribute("referrerpolicy", "strict-origin-when-cross-origin");
+      a.parentNode.replaceChild(f, a);
+      f.focus();
+    });
+  });
+
   /* ------------------------------------------------------------ stop press
      Is anything on tonight? Answered from the listings already in the page
      and the hours already handed to us, so there is no second copy of the
