@@ -1375,9 +1375,10 @@ html:not(.look-oak) .runhead__name img{filter:brightness(.16)}
 /* One act rather than several: a line about it and a video, which is a picture
    and a play button until somebody taps it (see site.js). */
 .box p.feature__text{margin:.7rem 0 0}
-.feature__video,.feature__player{display:block;width:100%;aspect-ratio:16/9;margin-top:1rem;background:#000;
+.feature__video,.feature__player{display:block;width:100%;aspect-ratio:16/9;background:#000;
   border:1px solid var(--rule-2)}
-.feature__player{border-color:transparent}
+.feature__media{position:relative;margin-top:1rem}
+.feature__player{position:absolute;left:0;top:0;background:none;border-color:transparent}
 .feature__video{position:relative;overflow:hidden}
 .feature__video img{display:block;width:100%;height:100%;object-fit:cover}
 .feature__play{position:absolute;left:50%;top:50%;width:4.4rem;height:4.4rem;margin:-2.2rem 0 0 -2.2rem;
@@ -1387,6 +1388,20 @@ html:not(.look-oak) .runhead__name img{filter:brightness(.16)}
 .feature__video:hover .feature__play{background:var(--teal)}
 .box p.feature__cap{margin:.5rem 0 0;font-size:.9rem;line-height:1.35}
 .look-oak .feature__video{border-color:var(--oak)}
+.feature__video.is-loading .feature__play{border-color:rgba(255,255,255,.3);border-top-color:#fff;
+  background:rgba(0,0,0,.45);animation:feature-spin 1s linear infinite}
+.feature__video.is-loading .feature__play::after{display:none}
+@keyframes feature-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.feature__video.is-loading .feature__play{animation:none}}
+
+/* Filmed on a phone, so taller than wide: under the words on a phone, centred and
+   short enough to leave the page around it, and beside the words on a wider screen. */
+.feature--tall .feature__video,.feature--tall .feature__player{aspect-ratio:9/16}
+.feature--tall .feature__media{width:min(100%,17rem);margin-inline:auto}
+@media (min-width:44rem){
+  .feature--tall{display:grid;grid-template-columns:minmax(0,1fr) 17rem;column-gap:2rem;align-items:center}
+  .feature--tall .feature__media{width:auto;margin:0}
+}
 
 /* --- a seasonal line on the lounge card (Christmas bookings) --------------- */
 .box p.lounge__season{margin:0 0 1rem;padding:.65rem .85rem;border-radius:10px;background:#A3271C;color:#FFF8EE;

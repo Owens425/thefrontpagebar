@@ -155,18 +155,25 @@
 
   /* ---------------------------------------------- a video, when it is asked for
      The page shows our own copy of the picture and a plain link. The player only
-     comes from YouTube on a tap, so nothing of theirs loads before that. */
+     comes from Facebook or YouTube on a tap, so nothing of theirs loads before
+     that. It is told the size of the picture, and goes over the top of it, so the
+     picture stays with a spinner on it until the player has something to show. */
   [].forEach.call(document.querySelectorAll("[data-video]"), function (a) {
     a.addEventListener("click", function (e) {
       e.preventDefault();
+      if (a.classList.contains("is-loading")) { return; }
       var f = document.createElement("iframe");
       f.className = "feature__player";
-      f.src = "https://www.youtube-nocookie.com/embed/" + a.getAttribute("data-video") + "?autoplay=1&rel=0&playsinline=1";
+      f.src = a.getAttribute("data-video") + "&width=" + a.offsetWidth + "&height=" + a.offsetHeight;
       f.title = a.getAttribute("data-title");
-      f.setAttribute("allow", "autoplay; encrypted-media; picture-in-picture; fullscreen");
+      f.setAttribute("allow", "autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; fullscreen");
+      f.setAttribute("scrolling", "no");
       f.setAttribute("allowfullscreen", "");
       f.setAttribute("referrerpolicy", "strict-origin-when-cross-origin");
-      a.parentNode.replaceChild(f, a);
+      a.classList.add("is-loading");
+      a.setAttribute("aria-hidden", "true");
+      a.tabIndex = -1;
+      a.parentNode.insertBefore(f, a.nextSibling);
       f.focus();
     });
   });
